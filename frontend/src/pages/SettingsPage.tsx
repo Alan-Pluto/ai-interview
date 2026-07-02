@@ -482,6 +482,7 @@ export default function SettingsPage() {
   const openTtsModal = () => {
     if (!ttsConfig) return;
     setTtsForm({
+      url: ttsConfig.url,
       model: ttsConfig.model,
       voice: ttsConfig.voice,
       format: ttsConfig.format,
@@ -1283,6 +1284,11 @@ export default function SettingsPage() {
                 ) : (
                   <div className="space-y-4">
                     <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">连接配置</p>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">URL</label>
+                      <input type="text" value={ttsForm.url || ''} onChange={(e) => setTtsForm(f => ({ ...f, url: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-400 transition-shadow" />
+                    </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Model</label>

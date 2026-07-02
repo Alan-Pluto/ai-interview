@@ -259,6 +259,7 @@ public class LlmProviderConfigService {
     try {
       VoiceInterviewProperties.QwenTtsConfig tts = voiceProperties.getQwen().getTts();
       return TtsConfigDTO.builder()
+          .url(tts.getUrl())
           .model(tts.getModel())
           .maskedApiKey(maskApiKey(tts.getApiKey()))
           .voice(tts.getVoice())
@@ -528,6 +529,7 @@ public class LlmProviderConfigService {
     try {
       VoiceInterviewProperties.AsrConfig asr = voiceProperties.getQwen().getAsr();
       VoiceInterviewProperties.QwenTtsConfig tts = voiceProperties.getQwen().getTts();
+      if (request.url() != null) tts.setUrl(request.url());
       if (request.model() != null) tts.setModel(request.model());
       if (request.voice() != null) tts.setVoice(request.voice());
       if (request.format() != null) tts.setFormat(request.format());
@@ -954,6 +956,7 @@ public class LlmProviderConfigService {
   private void writeTtsConfigToYaml(VoiceInterviewProperties.QwenTtsConfig tts) {
     mutateYamlText(ErrorCode.VOICE_CONFIG_WRITE_FAILED, "写入 TTS 配置失败", editor -> {
       LinkedHashMap<String, Object> values = new LinkedHashMap<>();
+      values.put("url", tts.getUrl());
       values.put("model", tts.getModel());
       values.put("api-key", "${AI_BAILIAN_API_KEY}");
       values.put("voice", tts.getVoice());

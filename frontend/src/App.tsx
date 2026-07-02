@@ -23,6 +23,10 @@ const InterviewSchedulePage = lazy(() => import('./pages/InterviewSchedulePage')
 const InterviewHubPage = lazy(() => import('./pages/InterviewHubPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const InterviewDetailPanel = lazy(() => import('./components/InterviewDetailPanel'));
+const JobPostAssistantPage = lazy(() => import('./pages/JobPostAssistantPage'));
+const CandidateMatchPage = lazy(() => import('./pages/CandidateMatchPage'));
+const InterviewGuidePage = lazy(() => import('./pages/InterviewGuidePage'));
+const CandidateMessagePage = lazy(() => import('./pages/CandidateMessagePage'));
 
 // Loading component
 const Loading = () => (
@@ -171,6 +175,12 @@ function App() {
           <Route path="/" element={<Layout />}>
             {/* 默认重定向到简历管理页面 */}
             <Route index element={<Navigate to="/history" replace />} />
+
+            {/* 招聘助手 */}
+            <Route path="recruitment/jobs" element={<JobPostAssistantPage />} />
+            <Route path="recruitment/matches" element={<CandidateMatchPage />} />
+            <Route path="recruitment/interview-guides" element={<InterviewGuidePage />} />
+            <Route path="recruitment/messages" element={<CandidateMessagePage />} />
 
             {/* 上传页面 */}
             <Route path="upload" element={<UploadPageWrapper />} />

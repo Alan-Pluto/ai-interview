@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TtsConfigDTO {
+  private String url;
   private String model;
   private String maskedApiKey;
   private String voice;

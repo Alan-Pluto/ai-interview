@@ -1,6 +1,7 @@
 package interview.guide.modules.llmprovider.dto;
 
 public record TtsConfigRequest(
+    String url,
     String model,
     String apiKey,
     String voice,

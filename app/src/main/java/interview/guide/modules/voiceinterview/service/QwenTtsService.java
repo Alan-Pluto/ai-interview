@@ -44,6 +44,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class QwenTtsService {
 
     // Runtime configuration values (loaded from VoiceInterviewProperties; setters kept for tests)
+    private String url;
+
     private String model;
 
     private String apiKey;
@@ -72,6 +74,7 @@ public class QwenTtsService {
     }
 
     private void applyTtsConfig(VoiceInterviewProperties.QwenTtsConfig tts) {
+        this.url = tts.getUrl();
         this.model = tts.getModel();
         this.apiKey = tts.getApiKey();
         this.voice = tts.getVoice();
@@ -95,8 +98,8 @@ public class QwenTtsService {
         if (apiKey == null || apiKey.trim().isEmpty()) {
             throw new IllegalStateException("API key must be configured before initializing QwenTtsService");
         }
-        log.info("QwenTtsService initialized with model: {}, voice: {}, sampleRate: {}Hz",
-                 model, voice, sampleRate);
+        log.info("QwenTtsService initialized with model: {}, voice: {}, sampleRate: {}Hz, url: {}",
+                 model, voice, sampleRate, url);
     }
 
     /**
@@ -136,6 +139,7 @@ public class QwenTtsService {
         try {
             // Build QwenTtsRealtimeParam with connection settings
             QwenTtsRealtimeParam param = QwenTtsRealtimeParam.builder()
+                    .url(url)
                     .model(model)
                     .apikey(apiKey)
                     .build();
@@ -215,7 +219,7 @@ public class QwenTtsService {
                 try {
                     qwenTtsRealtime.close();
                 } catch (Exception e) {
-                    log.error("Error closing TTS connection", e);
+                    log.debug("TTS connection already closed or failed to close cleanly: {}", e.getMessage());
                 }
             }
 
@@ -368,6 +372,10 @@ public class QwenTtsService {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public void setApiKey(String apiKey) {

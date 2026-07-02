@@ -138,6 +138,7 @@ public class VoiceInterviewProperties {
 
     @Data
     public static class QwenTtsConfig {
+        private String url = "wss://dashscope.aliyuncs.com/api-ws/v1/realtime";
         private String model = "qwen3-tts-flash-realtime";
         private String apiKey;
         private String voice = "Cherry";

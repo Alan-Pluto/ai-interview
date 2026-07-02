@@ -242,6 +242,22 @@ export const voiceInterviewApi = {
 
 };
 
+export function resolveVoiceWebSocketUrl(sessionId: number, webSocketUrl?: string): string {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const fallbackPath = `/ws/voice-interview/${sessionId}`;
+
+  if (!webSocketUrl) {
+    return `${protocol}//${window.location.host}${fallbackPath}`;
+  }
+
+  try {
+    const url = new URL(webSocketUrl);
+    return `${protocol}//${window.location.host}${url.pathname}${url.search}`;
+  } catch {
+    return `${protocol}//${window.location.host}${fallbackPath}`;
+  }
+}
+
 // ========== WebSocket 连接管理类 ==========
 
 export class VoiceInterviewWebSocket {

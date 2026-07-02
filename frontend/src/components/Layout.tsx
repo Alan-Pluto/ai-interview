@@ -1,6 +1,20 @@
 import {Link, Outlet, useLocation, useNavigate} from 'react-router-dom';
 import {motion} from 'framer-motion';
-import {Calendar, ChevronRight, Database, FileStack, MessageSquare, Moon, Settings, Sparkles, Sun, Users,} from 'lucide-react';
+import {
+  Briefcase,
+  Calendar,
+  ChevronRight,
+  ClipboardList,
+  Database,
+  FileSearch,
+  FileStack,
+  MessageSquare,
+  Moon,
+  Settings,
+  Sparkles,
+  Sun,
+  Users,
+} from 'lucide-react';
 import {useTheme} from '../hooks/useTheme';
 import {useState} from 'react';
 import UnifiedInterviewModal, {UnifiedInterviewConfig} from './UnifiedInterviewModal';
@@ -82,6 +96,16 @@ export default function Layout() {
   // 按业务模块组织的导航项
   const navGroups: NavGroup[] = [
     {
+      id: 'recruitment',
+      title: '招聘助手',
+      items: [
+        { id: 'job-assistant', path: '/recruitment/jobs', label: 'JD 助手', icon: Briefcase, description: '生成优化岗位 JD' },
+        { id: 'candidate-match', path: '/recruitment/matches', label: '简历匹配', icon: FileSearch, description: '简历与 JD 匹配' },
+        { id: 'interview-guide', path: '/recruitment/interview-guides', label: '面试题纲', icon: ClipboardList, description: '题纲和评分表' },
+        { id: 'candidate-message', path: '/recruitment/messages', label: '沟通文案', icon: MessageSquare, description: '候选人沟通' },
+      ],
+    },
+    {
       id: 'interview',
       title: '面试准备',
       items: [
@@ -125,6 +149,9 @@ export default function Layout() {
     }
     if (path === '/knowledgebase') {
       return currentPath === '/knowledgebase' || currentPath === '/knowledgebase/upload';
+    }
+    if (path.startsWith('/recruitment')) {
+      return currentPath === path || currentPath.startsWith(`${path}/`);
     }
     return currentPath.startsWith(path);
   };
@@ -218,13 +245,6 @@ export default function Layout() {
           </div>
         </nav>
 
-        {/* 底部信息 */}
-        <div className="p-4 border-t border-slate-100 dark:border-slate-700">
-          <div className="px-3 py-2 bg-gradient-to-r from-primary-50 to-indigo-50 dark:from-primary-900/30 dark:to-slate-800 rounded-xl">
-            <p className="text-xs text-primary-600 dark:text-primary-400 font-medium">AI 面试助手 v1.0</p>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Powered by AI</p>
-          </div>
-        </div>
       </aside>
 
       {/* 主内容区 */}
