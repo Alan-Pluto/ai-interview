@@ -11,6 +11,7 @@ import interview.guide.modules.recruitment.model.UpdateCandidateMessageDraftRequ
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +46,11 @@ public class CandidateMessageController {
     return Result.success(messageService.optimizeDraft(draftId, request));
   }
 
+  @GetMapping("/candidate-messages")
+  public Result<List<CandidateMessageDraftDTO>> listRecentDrafts() {
+    return Result.success(messageService.listRecentDrafts());
+  }
+
   @GetMapping("/jobs/{jobId}/candidate-messages")
   public Result<List<CandidateMessageDraftDTO>> listByJob(@PathVariable Long jobId) {
     return Result.success(messageService.listByJob(jobId));
@@ -66,5 +72,11 @@ public class CandidateMessageController {
       @Valid @RequestBody UpdateCandidateMessageDraftRequest request
   ) {
     return Result.success(messageService.updateDraft(draftId, request));
+  }
+
+  @DeleteMapping("/candidate-messages/{draftId}")
+  public Result<Void> deleteDraft(@PathVariable Long draftId) {
+    messageService.deleteDraft(draftId);
+    return Result.success();
   }
 }

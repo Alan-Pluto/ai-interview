@@ -111,6 +111,7 @@ export type JobChatStreamEvent =
 export interface CandidateJobMatch {
   id: number;
   jobPostId: number;
+  jobTitle?: string | null;
   jobPostVersionId: number;
   resumeId: number;
   resumeFilename: string;
@@ -134,6 +135,7 @@ export interface CreateCandidateMatchRequest {
 export interface InterviewGuide {
   id: number;
   jobPostId: number;
+  jobTitle?: string | null;
   resumeId?: number | null;
   resumeFilename?: string | null;
   matchId?: number | null;
@@ -163,6 +165,7 @@ export interface UpdateInterviewGuideRequest {
 export interface CandidateMessageDraft {
   id: number;
   jobPostId: number;
+  jobTitle?: string | null;
   resumeId?: number | null;
   resumeFilename?: string | null;
   matchId?: number | null;

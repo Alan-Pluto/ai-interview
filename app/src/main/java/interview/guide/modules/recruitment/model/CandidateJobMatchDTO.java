@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public record CandidateJobMatchDTO(
     Long id,
     Long jobPostId,
+    String jobTitle,
     Long jobPostVersionId,
     Long resumeId,
     String resumeFilename,

@@ -71,6 +71,14 @@ public class CandidateMessageService {
   }
 
   @Transactional(readOnly = true)
+  public List<CandidateMessageDraftDTO> listRecentDrafts() {
+    return draftRepository.findAllByOrderByUpdatedAtDesc()
+        .stream()
+        .map(mapper::toCandidateMessageDraftDTO)
+        .toList();
+  }
+
+  @Transactional(readOnly = true)
   public List<CandidateMessageDraftDTO> listByJob(Long jobId) {
     JobPostEntity job = findJob(jobId);
     return draftRepository.findByJobPostOrderByUpdatedAtDesc(job)
@@ -102,6 +110,16 @@ public class CandidateMessageService {
     draft.setSubject(request.subject());
     draft.setContent(request.content());
     return mapper.toCandidateMessageDraftDTO(draft);
+  }
+
+  @Transactional
+  public void deleteDraft(Long draftId) {
+    CandidateMessageDraftEntity draft = findDraft(draftId);
+    conversationRepository.findByDraft(draft).ifPresent(conversation -> {
+      messageRepository.deleteByConversation(conversation);
+      conversationRepository.delete(conversation);
+    });
+    draftRepository.delete(draft);
   }
 
   private MessagePreparation prepareCreate(CreateCandidateMessageDraftRequest request) {

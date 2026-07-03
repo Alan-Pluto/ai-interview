@@ -7,6 +7,7 @@ import interview.guide.modules.recruitment.model.CreateCandidateMatchRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,11 @@ public class CandidateJobMatchController {
     return Result.success(matchService.matchSingleCandidate(jobId, request));
   }
 
+  @GetMapping("/matches")
+  public Result<List<CandidateJobMatchDTO>> listRecentMatches() {
+    return Result.success(matchService.listRecentMatches());
+  }
+
   @GetMapping("/jobs/{jobId}/matches")
   public Result<List<CandidateJobMatchDTO>> listMatches(@PathVariable Long jobId) {
     return Result.success(matchService.listMatches(jobId));
@@ -39,5 +45,11 @@ public class CandidateJobMatchController {
   @GetMapping("/matches/{matchId}")
   public Result<CandidateJobMatchDTO> getMatch(@PathVariable Long matchId) {
     return Result.success(matchService.getMatch(matchId));
+  }
+
+  @DeleteMapping("/matches/{matchId}")
+  public Result<Void> deleteMatch(@PathVariable Long matchId) {
+    matchService.deleteMatch(matchId);
+    return Result.success();
   }
 }

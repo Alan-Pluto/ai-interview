@@ -131,6 +131,7 @@ public class RecruitmentMapper {
     return new CandidateJobMatchDTO(
         entity.getId(),
         entity.getJobPost().getId(),
+        entity.getJobPost().getTitle(),
         entity.getJobPostVersion().getId(),
         entity.getResume().getId(),
         entity.getResume().getOriginalFilename(),
@@ -154,6 +155,7 @@ public class RecruitmentMapper {
     return new InterviewGuideDTO(
         entity.getId(),
         entity.getJobPost().getId(),
+        entity.getJobPost().getTitle(),
         entity.getResume() == null ? null : entity.getResume().getId(),
         entity.getResume() == null ? null : entity.getResume().getOriginalFilename(),
         entity.getMatch() == null ? null : entity.getMatch().getId(),
@@ -174,6 +176,7 @@ public class RecruitmentMapper {
     return new CandidateMessageDraftDTO(
         entity.getId(),
         entity.getJobPost().getId(),
+        entity.getJobPost().getTitle(),
         entity.getResume() == null ? null : entity.getResume().getId(),
         entity.getResume() == null ? null : entity.getResume().getOriginalFilename(),
         entity.getMatch() == null ? null : entity.getMatch().getId(),

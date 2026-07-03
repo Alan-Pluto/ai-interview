@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface CandidateJobMatchRepository extends JpaRepository<CandidateJobMatchEntity, Long> {
 
   List<CandidateJobMatchEntity> findByJobPostOrderByCreatedAtDesc(JobPostEntity jobPost);
+
+  List<CandidateJobMatchEntity> findAllByOrderByCreatedAtDesc();
 }

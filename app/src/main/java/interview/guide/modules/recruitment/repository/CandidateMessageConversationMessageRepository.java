@@ -14,4 +14,6 @@ public interface CandidateMessageConversationMessageRepository
       CandidateMessageConversationEntity conversation);
 
   long countByConversation(CandidateMessageConversationEntity conversation);
+
+  void deleteByConversation(CandidateMessageConversationEntity conversation);
 }

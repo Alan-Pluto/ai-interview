@@ -8,6 +8,7 @@ import interview.guide.modules.recruitment.model.UpdateInterviewGuideRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,12 +36,23 @@ public class InterviewGuideController {
     return Result.success(guideService.getGuide(guideId));
   }
 
+  @GetMapping("/interview-guides")
+  public Result<List<InterviewGuideDTO>> listRecentGuides() {
+    return Result.success(guideService.listRecentGuides());
+  }
+
   @PutMapping("/interview-guides/{guideId}")
   public Result<InterviewGuideDTO> updateGuide(
       @PathVariable Long guideId,
       @Valid @RequestBody UpdateInterviewGuideRequest request
   ) {
     return Result.success(guideService.updateGuide(guideId, request));
+  }
+
+  @DeleteMapping("/interview-guides/{guideId}")
+  public Result<Void> deleteGuide(@PathVariable Long guideId) {
+    guideService.deleteGuide(guideId);
+    return Result.success();
   }
 
   @GetMapping("/jobs/{jobId}/interview-guides")

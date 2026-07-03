@@ -145,6 +145,10 @@ instance.interceptors.response.use(
       return Promise.reject(new Error('请求失败，请重试'));
     }
 
+    if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
+      return Promise.reject(new Error('请求处理时间较长，可能仍在后台生成中，请稍后刷新历史记录查看结果'));
+    }
+
     // 没有响应的情况：真正的网络错误或连接被重置
     // 对于文件上传，可能是网络超时或连接中断，但不一定是文件大小问题
     // 让后端返回真实的错误信息，而不是在这里假设

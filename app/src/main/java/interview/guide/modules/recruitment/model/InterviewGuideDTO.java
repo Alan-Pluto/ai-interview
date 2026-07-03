@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public record InterviewGuideDTO(
     Long id,
     Long jobPostId,
+    String jobTitle,
     Long resumeId,
     String resumeFilename,
     Long matchId,

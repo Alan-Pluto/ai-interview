@@ -5,6 +5,7 @@ import interview.guide.common.exception.ErrorCode;
 import interview.guide.common.transaction.TransactionalExecutor;
 import interview.guide.modules.recruitment.job.RecruitmentMapper;
 import interview.guide.modules.recruitment.model.CandidateJobMatchEntity;
+import interview.guide.modules.recruitment.model.CandidateMessageDraftEntity;
 import interview.guide.modules.recruitment.model.CreateInterviewGuideRequest;
 import interview.guide.modules.recruitment.model.InterviewGuideAiOutput;
 import interview.guide.modules.recruitment.model.InterviewGuideDTO;
@@ -15,6 +16,7 @@ import interview.guide.modules.recruitment.model.JobPostVersionEntity;
 import interview.guide.modules.recruitment.model.JobProfileEntity;
 import interview.guide.modules.recruitment.model.UpdateInterviewGuideRequest;
 import interview.guide.modules.recruitment.repository.CandidateJobMatchRepository;
+import interview.guide.modules.recruitment.repository.CandidateMessageDraftRepository;
 import interview.guide.modules.recruitment.repository.InterviewGuideRepository;
 import interview.guide.modules.recruitment.repository.JobPostRepository;
 import interview.guide.modules.recruitment.repository.JobPostVersionRepository;
@@ -39,6 +41,7 @@ public class InterviewGuideService {
   private final JobPostVersionRepository versionRepository;
   private final JobProfileRepository profileRepository;
   private final CandidateJobMatchRepository matchRepository;
+  private final CandidateMessageDraftRepository draftRepository;
   private final InterviewGuideAiService aiService;
   private final RecruitmentMapper mapper;
   private final ObjectMapper objectMapper;
@@ -58,6 +61,14 @@ public class InterviewGuideService {
   }
 
   @Transactional(readOnly = true)
+  public List<InterviewGuideDTO> listRecentGuides() {
+    return guideRepository.findAllByOrderByUpdatedAtDesc()
+        .stream()
+        .map(mapper::toInterviewGuideDTO)
+        .toList();
+  }
+
+  @Transactional(readOnly = true)
   public List<InterviewGuideDTO> listByJob(Long jobId) {
     JobPostEntity job = findJob(jobId);
     return guideRepository.findByJobPostOrderByUpdatedAtDesc(job)
@@ -73,6 +84,16 @@ public class InterviewGuideService {
     guide.setOutlineJson(request.outlineJson());
     guide.setScorecardJson(request.scorecardJson());
     return mapper.toInterviewGuideDTO(guide);
+  }
+
+  @Transactional
+  public void deleteGuide(Long guideId) {
+    InterviewGuideEntity guide = guideRepository.findById(guideId)
+        .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "面试题纲不存在"));
+    for (CandidateMessageDraftEntity draft : draftRepository.findByInterviewGuide(guide)) {
+      draft.setInterviewGuide(null);
+    }
+    guideRepository.delete(guide);
   }
 
   private GuidePreparation prepare(CreateInterviewGuideRequest request) {

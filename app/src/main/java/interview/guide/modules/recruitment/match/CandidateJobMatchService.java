@@ -7,12 +7,16 @@ import interview.guide.modules.recruitment.job.RecruitmentMapper;
 import interview.guide.modules.recruitment.model.CandidateJobMatchDTO;
 import interview.guide.modules.recruitment.model.CandidateJobMatchEntity;
 import interview.guide.modules.recruitment.model.CandidateJobMatchEntity.MatchRecommendation;
+import interview.guide.modules.recruitment.model.CandidateMessageDraftEntity;
 import interview.guide.modules.recruitment.model.CandidateMatchAiOutput;
 import interview.guide.modules.recruitment.model.CreateCandidateMatchRequest;
+import interview.guide.modules.recruitment.model.InterviewGuideEntity;
 import interview.guide.modules.recruitment.model.JobPostEntity;
 import interview.guide.modules.recruitment.model.JobPostVersionEntity;
 import interview.guide.modules.recruitment.model.JobProfileEntity;
 import interview.guide.modules.recruitment.repository.CandidateJobMatchRepository;
+import interview.guide.modules.recruitment.repository.CandidateMessageDraftRepository;
+import interview.guide.modules.recruitment.repository.InterviewGuideRepository;
 import interview.guide.modules.recruitment.repository.JobPostRepository;
 import interview.guide.modules.recruitment.repository.JobPostVersionRepository;
 import interview.guide.modules.recruitment.repository.JobProfileRepository;
@@ -35,6 +39,8 @@ public class CandidateJobMatchService {
   private final JobPostVersionRepository versionRepository;
   private final JobProfileRepository profileRepository;
   private final ResumeRepository resumeRepository;
+  private final InterviewGuideRepository guideRepository;
+  private final CandidateMessageDraftRepository draftRepository;
   private final CandidateJobMatchAiService aiService;
   private final RecruitmentMapper mapper;
   private final ObjectMapper objectMapper;
@@ -44,6 +50,14 @@ public class CandidateJobMatchService {
     MatchPreparation preparation = transactionalExecutor.call(() -> prepare(jobId, request));
     CandidateMatchAiOutput output = aiService.match(preparation.context(), request.provider());
     return transactionalExecutor.call(() -> saveMatch(preparation, output));
+  }
+
+  @Transactional(readOnly = true)
+  public List<CandidateJobMatchDTO> listRecentMatches() {
+    return matchRepository.findAllByOrderByCreatedAtDesc()
+        .stream()
+        .map(mapper::toMatchDTO)
+        .toList();
   }
 
   @Transactional(readOnly = true)
@@ -60,6 +74,19 @@ public class CandidateJobMatchService {
     return matchRepository.findById(matchId)
         .map(mapper::toMatchDTO)
         .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "匹配报告不存在"));
+  }
+
+  @Transactional
+  public void deleteMatch(Long matchId) {
+    CandidateJobMatchEntity match = matchRepository.findById(matchId)
+        .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "匹配报告不存在"));
+    for (InterviewGuideEntity guide : guideRepository.findByMatch(match)) {
+      guide.setMatch(null);
+    }
+    for (CandidateMessageDraftEntity draft : draftRepository.findByMatch(match)) {
+      draft.setMatch(null);
+    }
+    matchRepository.delete(match);
   }
 
   private MatchPreparation prepare(Long jobId, CreateCandidateMatchRequest request) {

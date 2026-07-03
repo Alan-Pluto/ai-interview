@@ -26,6 +26,10 @@ import type {
   UpdateCandidateMessageDraftRequest,
 } from '../types/recruitment';
 
+const AI_REQUEST_CONFIG = {
+  timeout: 300000,
+};
+
 export const recruitmentApi = {
   listJobs(): Promise<JobPost[]> {
     return request.get('/api/recruitment/jobs');
@@ -106,15 +110,19 @@ export const recruitmentApi = {
   },
 
   reviewCompliance(versionId: number): Promise<ComplianceRiskItem[]> {
-    return request.post(`/api/recruitment/job-versions/${versionId}/compliance-review`);
+    return request.post(`/api/recruitment/job-versions/${versionId}/compliance-review`, undefined, AI_REQUEST_CONFIG);
   },
 
   extractProfile(versionId: number): Promise<JobProfile> {
-    return request.post(`/api/recruitment/job-versions/${versionId}/profile`);
+    return request.post(`/api/recruitment/job-versions/${versionId}/profile`, undefined, AI_REQUEST_CONFIG);
   },
 
   createMatch(jobId: number, data: CreateCandidateMatchRequest): Promise<CandidateJobMatch> {
-    return request.post(`/api/recruitment/jobs/${jobId}/matches`, data);
+    return request.post(`/api/recruitment/jobs/${jobId}/matches`, data, AI_REQUEST_CONFIG);
+  },
+
+  listAllMatches(): Promise<CandidateJobMatch[]> {
+    return request.get('/api/recruitment/matches');
   },
 
   listMatches(jobId: number): Promise<CandidateJobMatch[]> {
@@ -125,8 +133,16 @@ export const recruitmentApi = {
     return request.get(`/api/recruitment/matches/${matchId}`);
   },
 
+  deleteMatch(matchId: number): Promise<void> {
+    return request.delete(`/api/recruitment/matches/${matchId}`);
+  },
+
   createInterviewGuide(data: CreateInterviewGuideRequest): Promise<InterviewGuide> {
-    return request.post('/api/recruitment/interview-guides', data);
+    return request.post('/api/recruitment/interview-guides', data, AI_REQUEST_CONFIG);
+  },
+
+  listAllInterviewGuides(): Promise<InterviewGuide[]> {
+    return request.get('/api/recruitment/interview-guides');
   },
 
   getInterviewGuide(guideId: number): Promise<InterviewGuide> {
@@ -137,19 +153,27 @@ export const recruitmentApi = {
     return request.put(`/api/recruitment/interview-guides/${guideId}`, data);
   },
 
+  deleteInterviewGuide(guideId: number): Promise<void> {
+    return request.delete(`/api/recruitment/interview-guides/${guideId}`);
+  },
+
   listInterviewGuides(jobId: number): Promise<InterviewGuide[]> {
     return request.get(`/api/recruitment/jobs/${jobId}/interview-guides`);
   },
 
   createCandidateMessage(data: CreateCandidateMessageDraftRequest): Promise<CandidateMessageDraftResponse> {
-    return request.post('/api/recruitment/candidate-messages', data);
+    return request.post('/api/recruitment/candidate-messages', data, AI_REQUEST_CONFIG);
   },
 
   optimizeCandidateMessage(
     draftId: number,
     data: OptimizeCandidateMessageDraftRequest
   ): Promise<CandidateMessageDraftResponse> {
-    return request.post(`/api/recruitment/candidate-messages/${draftId}/optimize`, data);
+    return request.post(`/api/recruitment/candidate-messages/${draftId}/optimize`, data, AI_REQUEST_CONFIG);
+  },
+
+  listAllCandidateMessages(): Promise<CandidateMessageDraft[]> {
+    return request.get('/api/recruitment/candidate-messages');
   },
 
   listCandidateMessages(jobId: number): Promise<CandidateMessageDraft[]> {
@@ -169,5 +193,9 @@ export const recruitmentApi = {
     data: UpdateCandidateMessageDraftRequest
   ): Promise<CandidateMessageDraft> {
     return request.put(`/api/recruitment/candidate-messages/${draftId}`, data);
+  },
+
+  deleteCandidateMessage(draftId: number): Promise<void> {
+    return request.delete(`/api/recruitment/candidate-messages/${draftId}`);
   },
 };
